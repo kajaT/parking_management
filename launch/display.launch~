@@ -1,0 +1,15 @@
+<launch>	 
+
+	<arg name="gui" default="False" />
+	<param name="use_gui" value="$(arg gui)"/>
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/car.urdf.xacro" />
+	<!--rosparam param="source_list">[/calibrated/joint_states]</rosparam-->
+	<rosparam param="publish_default_positions">[False]</rosparam>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<node pkg="parking_management" type="car_position_publisher" name="car_position_publisher" output="screen" />
+         <node name="map_server" pkg="map_server" type="map_server" args="$(find parking_management)/maps/parking_place.yaml" output="screen">
+		<param name="frame_id" value="/map"/>
+	</node>
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find parking_management)/urdf.rviz" />
+	
+</launch>
