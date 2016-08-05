@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/kaja/catkin_ws/parking_management/install/setup.sh

@@ -1,0 +1,53 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec81406308/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec81406308.dir/build.make CMakeFiles/cmTryCompileExec81406308.dir/build
+make[1]: Entering directory `/home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec81406308.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec81406308.dir/CheckSymbolExists.c.o   -c /home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec81406308
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec81406308.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec81406308.dir/CheckSymbolExists.c.o  -o cmTryCompileExec81406308 -rdynamic 
+CMakeFiles/cmTryCompileExec81406308.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec81406308] Error 1
+make[1]: Leaving directory `/home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec81406308/fast] Error 2
+
+File /home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec684707200/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec684707200.dir/build.make CMakeFiles/cmTryCompileExec684707200.dir/build
+make[1]: Entering directory `/home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec684707200.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec684707200.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec684707200
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec684707200.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec684707200.dir/CheckFunctionExists.c.o  -o cmTryCompileExec684707200 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [cmTryCompileExec684707200] Error 1
+make[1]: Leaving directory `/home/kaja/catkin_ws/parking_management/build/catkin_tools_prebuild/CMakeFiles/CMakeTmp'
+make: *** [cmTryCompileExec684707200/fast] Error 2
+
+

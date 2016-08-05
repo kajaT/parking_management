@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="car">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parking_car">
 
-  <xacro:property name="Lenght" value="3" />
-  <xacro:property name="width" value="1.5" />
-  <xacro:property name="height" value="0.8" />
+  <xacro:property name="Lenght" value="9" />
+  <xacro:property name="width" value="3.5" />
+  <xacro:property name="height" value="2" />
   <xacro:property name="mass" value="1000" />
   <xacro:property name="name" value="car" />
   
 
-  <xacro:macro name="default_inertial" params="mass">
+ <xacro:macro name="default_inertial" params="mass">  <!-- Need this?!  -->
     <inertial>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <mass value="${mass}" />
@@ -21,7 +21,7 @@
 
   <link name="body_link">
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
+      <origin xyz="0 12 0" rpy="0 0 0" />
       <geometry>
          <box size="${Lenght} ${width} ${height}"/>
       </geometry>
@@ -29,12 +29,12 @@
         <color rgba="0 0 .8 1"/>
       </material>
     </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-         <box size="${Lenght} ${width} ${height}"/>
-      </geometry>
-    </collision>
+    <!-- <collision>
+     	<origin xyz="0 0 0" rpy="0 0 0" />
+      		<geometry>
+         		<box size="${Lenght} ${width} ${height}"/>
+      		</geometry>
+    </collision> -->
     <xacro:default_inertial mass="10"/>
   </link>
 

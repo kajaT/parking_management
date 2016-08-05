@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parking_car">
+
+    <xacro:property name="Lenght" value="9" />
+    <xacro:property name="width" value="3.5" />
+    <xacro:property name="height" value="2" />
+    <xacro:property name="mass" value="1000" />
+    <xacro:property name="name" value="car" />
+
+    <xacro:macro name="car" params="prefix *origin *color">
+        <link name="${prefix}_car">
+
+            <visual>
+                <xacro:insert_block name="origin" />
+                <geometry>
+                <box size="${Lenght} ${width} ${height}"/>
+                </geometry>
+                <xacro:insert_block name="color" />
+            </visual>
+
+            <collision>
+                <geometry>
+                    <box size="${Lenght} ${width} ${height}"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+            </collision>
+            <xacro:default_inertial mass="10"/>
+        </link>
+
+        <!-- <joint name="base_to_${prefix}_car" type="fixed">
+            <parent link="base_link"/>
+            <child link="${prefix}_leg"/>
+            <origin xyz="${reflect*(width+.02)} 0 .25" />
+        </joint> -->
+        <!-- A bunch of stuff cut -->
+    </xacro:macro>
+
+    <xacro:car prefix="parking">
+        <origin= xyz="9 4 1" rpy="0 0 0" />
+        <material name="color">
+            <color rgba="0 0 .8 1"/>
+        </material>
+    </xacro:car>
+
+    <xacro:car prefix="new" />
+        <origin= xyz="1 12 1" rpy="0 0 0" />
+        <material name="color">
+            <color rgba="1 1 .8 1"/>
+        </material>
+    </xacro:car>
+
+</robot>
+

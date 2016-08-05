@@ -1,0 +1,8 @@
+prefix=/home/kaja/catkin_ws/parking_management/devel/.private/catkin_tools_prebuild
+
+Name: catkin_tools_prebuild
+Description: Description of catkin_tools_prebuild
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/kaja/catkin_ws/parking_management/devel/.private/catkin_tools_prebuild/lib 
+Requires: 

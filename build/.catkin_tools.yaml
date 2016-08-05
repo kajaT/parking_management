@@ -1,0 +1,6 @@
+devel_space: /home/kaja/catkin_ws/parking_management/devel
+install: false
+install_space: /home/kaja/catkin_ws/parking_management/install
+profile: default
+source_space: /home/kaja/catkin_ws/parking_management/src
+workspace: /home/kaja/catkin_ws/parking_management
