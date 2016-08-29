@@ -5,10 +5,11 @@ project(parking_management)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED roscpp std_msgs tf)
+#find_library(eigen REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(Eigen3 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -63,6 +64,11 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 
+include_directories(include
+  ${catkin_INCLUDE_DIRS}
+  ${eigen_INCLUDE_DIRS} /usr/include/eigen3
+)
+
 ## Declare a cpp library
 # add_library(object
 #   src/${PROJECT_NAME}/object.cpp
@@ -70,6 +76,11 @@ catkin_package(
 
 ## Declare a cpp executable
 add_executable(car_position_publisher src/car_position_publisher.cpp)
+add_executable(blocked_space src/blocked_space.cpp)
+add_executable(master_parkingLot src/master_parkingLot.cpp)
+add_executable(section_head src/section_head.cpp)
+add_executable(car src/car.cpp)
+
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -79,7 +90,18 @@ add_executable(car_position_publisher src/car_position_publisher.cpp)
 target_link_libraries(car_position_publisher
    ${catkin_LIBRARIES}
  )
-
+target_link_libraries(blocked_space
+   ${catkin_LIBRARIES}
+ )
+target_link_libraries(master_parkingLot
+   ${catkin_LIBRARIES}
+ )
+target_link_libraries(section_head
+   ${catkin_LIBRARIES}
+ )
+target_link_libraries(car
+   ${catkin_LIBRARIES}
+ )
 #############
 ## Install ##
 #############

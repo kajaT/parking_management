@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="car">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parked_car">
 
   <xacro:property name="Lenght" value="3" />
   <xacro:property name="width" value="1.5" />
-  <xacro:property name="height" value="0.8" />
+  <xacro:property name="height" value="2.8" />
   <xacro:property name="mass" value="1000" />
-  <xacro:property name="name" value="drived_car" />
+  <xacro:property name="name" value="parked_car" />
     <link name="${name}/body_link">
       <visual>
-        <origin xyz="1 6 0.4" rpy="0 0 0" />
+        <origin xyz="1 2 1.4" rpy="0 0 1.57" />
         <geometry>
           <box size="${Lenght} ${width} ${height}"/>
         </geometry>
-        <material name="blue">
-          <color rgba="0 0 .8 1"/>
+        <material name="red">
+          <color rgba="1 0 0 1"/>
         </material>
       </visual>
       <collision>
@@ -23,5 +23,5 @@
         </geometry>
       </collision>
       <xacro:default_inertial mass="10"/>
-  </link>
+    </link>
 </robot>

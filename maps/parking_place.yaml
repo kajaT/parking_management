@@ -1,6 +1,6 @@
 image: parking_place.png
-resolution: 0.05
-origin: [-10.0, 0.0, 0.0]
+resolution: 0.062
+origin: [0.0, 0.0, 0.0]
 negate: 0
 occupied_thresh: 0.65
 free_thresh: 0.05

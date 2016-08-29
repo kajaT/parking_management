@@ -2,15 +2,59 @@
 
 	<arg name="gui" default="False" />
 	<param name="use_gui" value="$(arg gui)"/>
-	<param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/car.urdf.xacro" /> 
-	<!-- <param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/both_cars.urdf.xacro" /> -->
-	<!--rosparam param="source_list">[/calibrated/joint_states]</rosparam-->
-	<rosparam param="publish_default_positions">[False]</rosparam>
-	 <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
-	<node pkg="parking_management" type="car_position_publisher" name="car_position_publisher" output="screen" />
-         <node name="map_server" pkg="map_server" type="map_server" args="$(find parking_management)/maps/parking_place.yaml" output="screen">
-		<param name="frame_id" value="/world"/>
+	
+	<!-- <param name="map_file" value="$(find parking_management)/maps/map.txt" />
+	<param name="max_id" value="3"/> -->
+	
+	<arg name="car_name" default="drived_car"/>
+	<group ns="drived_car">	
+		<param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/car.urdf.xacro"/> 
+		<!-- <param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/both_cars.urdf.xacro" /> -->
+		<!--rosparam param="source_list">[/calibrated/joint_states]</rosparam-->
+
+		<rosparam param="publish_default_positions">[False]</rosparam> 
+
+		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
+		<node pkg="parking_management" type="car_position_publisher" name="car_position_publisher" output="screen" />
+	</group>
+
+	<group ns="parked_car">
+		<param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/parked_car.urdf.xacro" />
+
+		<!--rosparam param="source_list">[/calibrated/joint_states]</rosparam-->
+		<!--rosparam param="publish_default_positions">[False]</rosparam-->
+		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+		<node pkg="parking_management" type="blocked_space" name="blocked_space" output="screen" />
+	</group>
+
+	<param name="map_file" value="$(find parking_management)/maps/map.txt" />
+	<param name="max_id" value="17"/>
+
+	<!-- <node pkg="parking_management" type="car_position_publisher" name="car_position_publisher" output="screen" /> -->
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find parking_management)/maps/parking_place.yaml" output="screen">
+	<param name="frame_id" value="/world"/>
 	</node>
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find parking_management)/urdf.rviz" />
+
+	<arg name="sections" default="section_1"/>
+		<group ns="section_1">	
+			<param name="section_id" value="1" />
+			<param name="section_place" value="3"/>
+			<node pkg="parking_management" type="section_head" name="section_head" output="screen"/>
+		</group>
+
+		<group ns="section_2">	
+			<param name="section_id" value="2" />
+			<param name="section_place" value="1"/>
+			<node pkg="parking_management" type="section_head" name="section_head" output="screen"/>
+		</group>
+
+		<group ns="section_3">	
+			<param name="section_id" value="3" />
+			<param name="section_place" value="2"/>
+			<node pkg="parking_management" type="section_head" name="section_head" output="screen"/>
+		</group>
+
 	
 </launch>
