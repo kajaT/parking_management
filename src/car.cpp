@@ -1,107 +1,115 @@
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <geometry_msgs/Pose.h>
+
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_datatypes.h>
+//#include <tf/transform_listener.h>
+//#include <std_msgs/String.h>
+
+#include <std_msgs/Int16.h>
+#include <std_msgs/String.h>
+#include <fstream>
+#include <iostream>
+
 
 #include <sstream>
+#include <iostream>
 
-/**
- * This tutorial demonstrates simple sending of messages over the ROS system.
- */
+#include <Eigen/Eigen>
 
- void chatterCallback(const std_msgs::String::ConstPtr& msg)
+
+
+class car_position
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+private: 
+      ros::NodeHandle nh_;
+      float x;
+      float y;
+      tf::Quaternion q;
+      void chatterCallback(const geometry_msgs::Pose& msg);
+
+      ros:: Subscriber master_free;
+
+public: 
+  ros:: Publisher publish_position;
+  geometry_msgs::Pose current_position;
+  
+  car_position(ros::NodeHandle nh) : nh_(nh)
+  {
+    nh_.param<float>("x", x, 0);
+    nh_.param<float>("y", y, 0);
+    current_position.position.x=x;
+    current_position.position.y=y;
+
+    // new car subscribes master to get its parking place position
+    master_free = nh.subscribe("/optimal_position", 10, &car_position::chatterCallback, this);
+
+    // new car publishes its parking place position ( to section_head)
+    publish_position = nh_.advertise<geometry_msgs::Pose>("current_position", 10);
+ 
+  }
+};
+
+void car_position::chatterCallback(const geometry_msgs::Pose& msg){
+
+  static tf::TransformBroadcaster car_broadcast;
+  tf::Transform transform;
+  tf::Quaternion q;
+ // q.x = msg.orientation.x;
+  // position for new (blue) car
+  transform.setOrigin( tf:: Vector3(msg.position.x, msg.position.y, msg.position.z));
+//  transform.setOrigin( tf::Vector3(7.0, -8.0 , 0.0) );// moves blue car to the first parking place
+//  transform.setOrigin( tf::Vector3(22.0, -8.0 , 0.0) ); // moves blue car to the parking place in the middle
+//  transform.setOrigin( tf::Vector3(37.0, -8.0 , 0.0) ); // moves blue car to the last parking place
+  //quaternionTFtoMsg(msg.orientation,q);
+    q.setRPY(msg.orientation.x, msg.orientation.y, msg.orientation.z);
+
+  transform.setRotation(q);
+  car_broadcast.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "drived_car/body_link"));
+  current_position = msg;
+  publish_position.publish(current_position);
 }
+
+
+//  void car_position::chatterCallback(const std_msgs::String::ConstPtr& msg)
+// {
+//      std_msgs::String msg_send;
+  
+//     ROS_INFO("Free position at %s ", msg->data.c_str());
+// }
 
 
 int main(int argc, char **argv)
 {
-  /**
-   * The ros::init() function needs to see argc and argv so that it can perform
-   * any ROS arguments and name remapping that were provided at the command line.
-   * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
-   * the easiest way to do it.  The third argument to init() is the name of the node.
-   *
-   * You must call one of the versions of ros::init() before using any other
-   * part of the ROS system.
-   */
-  ros::init(argc, argv, "car");
+  ros::init(argc, argv, "car_position");
 
-  /**
-   * NodeHandle is the main access point to communications with the ROS system.
-   * The first NodeHandle constructed will fully initialize this node, and the last
-   * NodeHandle destructed will close down the node.
-   */
-  ros::NodeHandle n;
-
-  /**
-   * The advertise() function is how you tell ROS that you want to
-   * publish on a given topic name. This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing. After this advertise() call is made, the master
-   * node will notify anyone who is trying to subscribe to this topic name,
-   * and they will in turn negotiate a peer-to-peer connection with this
-   * node.  advertise() returns a Publisher object which allows you to
-   * publish messages on that topic through a call to publish().  Once
-   * all copies of the returned Publisher object are destroyed, the topic
-   * will be automatically unadvertised.
-   *
-   * The second parameter to advertise() is the size of the message queue
-   * used for publishing messages.  If messages are published more quickly
-   * than we can send them, the number here specifies how many messages to
-   * buffer up before throwing some away.
-   */
-  ros::Publisher car_parking_position = n.advertise<std_msgs::String>("/car/parking_position", 10);
-
-/**
-   * The subscribe() call is how you tell ROS that you want to receive messages
-   * on a given topic.  This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing.  Messages are passed to a callback function, here
-   * called chatterCallback.  subscribe() returns a Subscriber object that you
-   * must hold on to until you want to unsubscribe.  When all copies of the Subscriber
-   * object go out of scope, this callback will automatically be unsubscribed from
-   * this topic.
-   *
-   * The second parameter to the subscribe() function is the size of the message
-   * queue.  If messages are arriving faster than they are being processed, this
-   * is the number of messages that will be buffered up before beginning to throw
-   * away the oldest ones.
-   */
-  ros::Subscriber sub = n.subscribe("/master/free_space", 10, chatterCallback);
-
+  ros:: NodeHandle n;
+  
+  car_position id_0(n);
+  // car_position id_3(n);
+  // car_position id_4(n);
+  // car_position id_5(n);
+  // car_position id_6(n);
+  // car_position id_7(n);
+  // car_position id_8(n);
   ros::Rate loop_rate(1);
 
-  /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
-   */
-  int position = 2;
-  while (ros::ok())
-  {
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
-    std_msgs::String msg;
-
-    std::stringstream ss;
-    ss << "my car position: " << position;
-    msg.data = ss.str();
-
-    ROS_INFO("%s", msg.data.c_str());
-
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
-    car_parking_position.publish(msg);
+ 
+   while (ros::ok())
+   {
+    // publish topic /id_0/current_position ..
+    //id_0.publish_position.publish(id_0.current_position);
+    // id_3.publish_position.publish(id_3.current_position);
+    // id_4.publish_position.publish(id_4.current_position);
+    // id_5.publish_position.publish(id_5.current_position);
+    // id_6.publish_position.publish(id_6.current_position);
+    // id_7.publish_position.publish(id_7.current_position);
+    // id_8.publish_position.publish(id_8.current_position);
 
     ros::spinOnce();
 
-     loop_rate.sleep();
-  }
+    loop_rate.sleep();
+   }
 
 
   return 0;

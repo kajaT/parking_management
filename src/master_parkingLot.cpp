@@ -1,111 +1,207 @@
-#include "ros/ros.h"
-#include "std_msgs/String.h"
+#include <ros/ros.h>
+#include <geometry_msgs/Pose.h>
+
+#include <tf/transform_broadcaster.h>
+
+#include <std_msgs/Int16.h>
+#include <std_msgs/String.h>
+#include <fstream>
+#include <iostream>
+
 
 #include <sstream>
+#include <iostream>
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+#include <Eigen/Eigen>
+
+class master 
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+private: 
+  ros::NodeHandle nh_; 
+
+  float minDistance;
+  
+  int x1, x2, x3;
+  int y1, y2, y3;
+  float pow1, pow2, pow3, pow4, pow5, pow6;
+  float d1, d2, d3, d4, d5, d6;
+  
+  tf::Quaternion q;
+
+  void chatter_section1(const geometry_msgs::Pose& msg);
+  void chatter_section2(const geometry_msgs::Pose& msg);
+  void chatter_section3(const geometry_msgs::Pose& msg);
+  // void chatter_section4(const geometry_msgs::Pose& msg);  
+  // void chatter_section5(const geometry_msgs::Pose& msg);
+  // void chatter_section6(const geometry_msgs::Pose& msg);
+
+
+
+  void calculate_optimal_place();
+
+
+  ros:: Subscriber section_1;
+  ros:: Subscriber section_2;
+  ros:: Subscriber section_3;
+  // ros:: Subscriber section_4;
+  // ros:: Subscriber section_5;
+  // ros:: Subscriber section_6;
+
+
+
+public: 
+  ros:: Publisher publish_free_space;
+
+  geometry_msgs::Pose optimal_position;
+  
+  geometry_msgs::Pose free_in_section_1;
+  geometry_msgs::Pose free_in_section_2;
+  geometry_msgs::Pose free_in_section_3;
+  // geometry_msgs::Pose free_in_section_4;
+  // geometry_msgs::Pose free_in_section_5;
+  // geometry_msgs::Pose free_in_section_6;
+
+
+  master(ros::NodeHandle nh) : nh_(nh)
+  {
+    
+    section_1 = nh.subscribe("/section_1/best_pose", 10, &master::chatter_section1, this);
+    section_2 = nh.subscribe("/section_2/best_pose", 10, &master::chatter_section2, this);
+    section_3 = nh.subscribe("/section_3/best_pose", 10, &master::chatter_section3, this);
+    // section_4 = nh.subscribe("/section_4/best_pose", 10, &master::chatter_section4, this);
+    // section_5 = nh.subscribe("/section_5/best_pose", 10, &master::chatter_section5, this);
+    // section_6 = nh.subscribe("/section_6/best_pose", 10, &master::chatter_section6, this);
+
+    
+
+    publish_free_space = nh_.advertise<geometry_msgs::Pose>("optimal_position", 10);
+
+  }
+};
+
+
+void master::chatter_section1(const geometry_msgs::Pose& msg)
+{
+  free_in_section_1 = msg;
+ 
+  pow1 = pow((free_in_section_1.position.x-31),2)+pow((free_in_section_1.position.y-8),2);     
+  d1 = sqrt(pow1);
+  
+  calculate_optimal_place();
+}
+
+void master::chatter_section2(const geometry_msgs::Pose& msg)
+{
+  free_in_section_2 = msg;
+ 
+  pow2 = pow((free_in_section_2.position.x-31),2) + pow((free_in_section_2.position.y-8),2); 
+  d2 = sqrt(pow2);
+
+  calculate_optimal_place();
+}
+
+void master::chatter_section3(const geometry_msgs::Pose& msg)
+{
+  free_in_section_3 = msg; 
+  pow3 = pow((free_in_section_3.position.x-31),2) + pow((free_in_section_3.position.y-8),2); 
+  d3 = sqrt(pow3);
+
+  calculate_optimal_place();
+}
+
+// void master::chatter_section4(const geometry_msgs::Pose& msg)
+// {
+//   free_in_section_4 = msg; 
+//   pow4 = pow(abs((free_in_section_4.position.x-31)),2) + pow(abs((free_in_section_4.position.y-8)),2); 
+//   d4 = sqrt(pow4);
+
+//   calculate_optimal_place();
+// }
+// void master::chatter_section5(const geometry_msgs::Pose& msg)
+// {
+//   free_in_section_5 = msg; 
+//   pow5 = pow(abs((free_in_section_5.position.x-31)),2) + pow(abs((free_in_section_5.position.y-8)),2); 
+//   d5 = sqrt(pow4);
+
+//   calculate_optimal_place();
+// }
+// void master::chatter_section6(const geometry_msgs::Pose& msg)
+// {
+//   free_in_section_6 = msg; 
+//   pow6 = pow(abs((free_in_section_6.position.x-31)),2) + pow(abs((free_in_section_6.position.y-8)),2); 
+//   d6 = sqrt(pow4);
+
+//   calculate_optimal_place();
+// }
+
+
+void master::calculate_optimal_place(){
+      geometry_msgs::Pose bestOfAll;
+      float minOfAll = 1000;
+
+      if (d1 < minOfAll)
+      {
+        minOfAll = d1;
+        bestOfAll = free_in_section_1;
+      }
+      if (d2 < minOfAll)
+      {
+        minOfAll = d2;
+        bestOfAll = free_in_section_2;
+      }
+      if (d3 < minOfAll)
+      {
+        minOfAll = d3;
+        bestOfAll = free_in_section_3;
+      }
+      // if (d4 < minOfAll)
+      // {
+      //   minOfAll = d4;
+      //   bestOfAll = free_in_section_4;
+      // }
+      // if (d5 < minOfAll)
+      // {
+      //   minOfAll = d5;
+      //   bestOfAll = free_in_section_5;
+      // }
+      // if (d6 < minOfAll)
+      // {
+      //   minOfAll = d6;
+      //   bestOfAll = free_in_section_6;
+      // }
+      optimal_position = bestOfAll;
+      ROS_INFO ("minOfAll: %f", minOfAll);
+      
+      if (minOfAll <1000)
+      {
+        publish_free_space.publish(optimal_position);
+      }
+      else
+      {
+        ROS_INFO ("No Vacant Parking Spaces on Parking Lot!!");
+      }
+     
 }
 
 int main(int argc, char **argv)
 {
-  /**
-   * The ros::init() function needs to see argc and argv so that it can perform
-   * any ROS arguments and name remapping that were provided at the command line.
-   * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
-   * the easiest way to do it.  The third argument to init() is the name of the node.
-   *
-   * You must call one of the versions of ros::init() before using any other
-   * part of the ROS system.
-   */
-  ros::init(argc, argv, "master_parkingLot");
+// initializing the node
+  ros::init(argc, argv, "master");
 
-  /**
-   * NodeHandle is the main access point to communications with the ROS system.
-   * The first NodeHandle constructed will fully initialize this node, and the last
-   * NodeHandle destructed will close down the node.
-   */
   ros::NodeHandle n;
 
-  /**
-   * The advertise() function is how you tell ROS that you want to
-   * publish on a given topic name. This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing. After this advertise() call is made, the master
-   * node will notify anyone who is trying to subscribe to this topic name,
-   * and they will in turn negotiate a peer-to-peer connection with this
-   * node.  advertise() returns a Publisher object which allows you to
-   * publish messages on that topic through a call to publish().  Once
-   * all copies of the returned Publisher object are destroyed, the topic
-   * will be automatically unadvertised.
-   *
-   * The second parameter to advertise() is the size of the message queue
-   * used for publishing messages.  If messages are published more quickly
-   * than we can send them, the number here specifies how many messages to
-   * buffer up before throwing some away.
-   */
-  ros::Publisher master_free_space = n.advertise<std_msgs::String>("/master/free_space", 10);
+  master master_pL(n);
 
+  ros::Rate loop_rate(.5);
 
-  /**
-   * The subscribe() call is how you tell ROS that you want to receive messages
-   * on a given topic.  This invokes a call to the ROS
-   * master node, which keeps a registry of who is publishing and who
-   * is subscribing.  Messages are passed to a callback function, here
-   * called chatterCallback.  subscribe() returns a Subscriber object that you
-   * must hold on to until you want to unsubscribe.  When all copies of the Subscriber
-   * object go out of scope, this callback will automatically be unsubscribed from
-   * this topic.
-   *
-   * The second parameter to the subscribe() function is the size of the message
-   * queue.  If messages are arriving faster than they are being processed, this
-   * is the number of messages that will be buffered up before beginning to throw
-   * away the oldest ones.
-   */
-  ros::Subscriber sub = n.subscribe("/section_head_1/free_space", 10, chatterCallback);
-
-  /**
-   * ros::spin() will enter a loop, pumping callbacks.  With this version, all
-   * callbacks will be called from within this thread (the main one).  ros::spin()
-   * will exit when Ctrl-C is pressed, or the node is shutdown by the master.
-   */
-
-  ros::Rate loop_rate(1);
-
-  /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
-   */
-  int place = 1;
   while (ros::ok())
   {
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
-    std_msgs::String msg;
-
-    std::stringstream ss;
-    ss << "free position on parking lot: " << place;
-    msg.data = ss.str();
-
-    ROS_INFO("%s", msg.data.c_str());
-
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
-    master_free_space.publish(msg);
+    master_pL.publish_free_space.publish(master_pL.optimal_position);
 
     ros::spinOnce();
 
-     loop_rate.sleep();
+    loop_rate.sleep();
   }
+
   return 0;
 }

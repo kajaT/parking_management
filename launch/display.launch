@@ -1,60 +1,115 @@
 <launch>	 
 
-	<arg name="gui" default="False" />
+<arg name="gui" default="False" />
 	<param name="use_gui" value="$(arg gui)"/>
 	
 	<!-- <param name="map_file" value="$(find parking_management)/maps/map.txt" />
 	<param name="max_id" value="3"/> -->
 	
+	<param name="map_file" value="$(find parking_management)/maps/map.txt" />
+	<param name="max_id" value="17"/>
 	<arg name="car_name" default="drived_car"/>
 	<group ns="drived_car">	
 		<param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/car.urdf.xacro"/> 
 		<!-- <param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/both_cars.urdf.xacro" /> -->
 		<!--rosparam param="source_list">[/calibrated/joint_states]</rosparam-->
-
 		<rosparam param="publish_default_positions">[False]</rosparam> 
-
 		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> 
-		<node pkg="parking_management" type="car_position_publisher" name="car_position_publisher" output="screen" />
+
 	</group>
+		<!-- <node name="car_position_publisher" pkg="parking_management" type="car_position_publisher" output="screen" /> -->
 
 	<group ns="parked_car">
 		<param name="robot_description" command="$(find xacro)/xacro.py $(find parking_management)/urdf/parked_car.urdf.xacro" />
-
 		<!--rosparam param="source_list">[/calibrated/joint_states]</rosparam-->
 		<!--rosparam param="publish_default_positions">[False]</rosparam-->
 		<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
-		<node pkg="parking_management" type="blocked_space" name="blocked_space" output="screen" />
-	</group>
+<!-- 		<node name="blocked_space" pkg="parking_management" type="blocked_space" output="screen" />
+ -->	</group>
 
-	<param name="map_file" value="$(find parking_management)/maps/map.txt" />
-	<param name="max_id" value="17"/>
 
 	<!-- <node pkg="parking_management" type="car_position_publisher" name="car_position_publisher" output="screen" /> -->
 
     <node name="map_server" pkg="map_server" type="map_server" args="$(find parking_management)/maps/parking_place.yaml" output="screen">
 	<param name="frame_id" value="/world"/>
 	</node>
+
 	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find parking_management)/urdf.rviz" />
 
-	<arg name="sections" default="section_1"/>
 		<group ns="section_1">	
-			<param name="section_id" value="1" />
-			<param name="section_place" value="3"/>
-			<node pkg="parking_management" type="section_head" name="section_head" output="screen"/>
+			<node name="section_head_1" pkg="parking_management" type="section_head" output="screen" args="0 1 2" />
 		</group>
-
 		<group ns="section_2">	
-			<param name="section_id" value="2" />
-			<param name="section_place" value="1"/>
-			<node pkg="parking_management" type="section_head" name="section_head" output="screen"/>
+			<node name="section_head_2" pkg="parking_management" type="section_head" output="screen" args="3 4 5" />
 		</group>
-
 		<group ns="section_3">	
-			<param name="section_id" value="3" />
-			<param name="section_place" value="2"/>
-			<node pkg="parking_management" type="section_head" name="section_head" output="screen"/>
+			<node name="section_head_3" pkg="parking_management" type="section_head" output="screen" args="6 7 8" />
+		</group>
+		<group ns="section_4">	
+			<node name="section_head_4" pkg="parking_management" type="section_head" output="screen" args="9 10 11" />
+		</group>
+		<group ns="section_5">	
+			<node name="section_head_5" pkg="parking_management" type="section_head" output="screen" args="12 13 14" />
+		</group>
+		<group ns="section_6">	
+			<node name="section_head_6" pkg="parking_management" type="section_head" output="screen" args="15 16 17" />
+		</group>
+	<!-- <node name="section_2" pkg="parking_management" type="section_head" output="screen" args="3 4 5" />
+	<node name="section_3" pkg="parking_management" type="section_head" output="screen" args="6 7 8" /> -->
+	<node name="master" pkg="parking_management" type="master_parkingLot" output="screen" />
+<!-- 	<arg name="cars" default="id_0"/> -->
+
+		<group ns="id_1">	
+			<param name="x" value="0"/>
+			<param name="y" value="0"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+<!--
+		<group ns="id_2">	
+			<param name="x" value="9.5"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+ 		<group ns="id_2">	
+			<param name="x" value="12"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
 		</group>
 
+		<group ns="id_3">	
+			<param name="x" value="14.25"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+
+		<group ns="id_4">	
+			<param name="x" value="16.7"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+
+		<group ns="id_5">	
+			<param name="x" value="19"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+
+		<group ns="id_6">	
+			<param name="x" value="21.25"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+
+		<group ns="id_7">	
+			<param name="x" value="23.7"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group>
+
+		<group ns="id_8">	
+			<param name="x" value="26"/>
+			<param name="y" value="1"/>
+			<node pkg="parking_management" type="car" name="car" output="screen"/>
+		</group> -->
 	
 </launch>
