@@ -60,8 +60,8 @@
 <!-- 	<arg name="cars" default="id_0"/> -->
 
 		<group ns="id_1">	
-			<param name="x" value="0"/>
-			<param name="y" value="0"/>
+			<param name="x" value="7"/>
+			<param name="y" value="1"/>
 			<node pkg="parking_management" type="car" name="car" output="screen"/>
 		</group>
 <!--

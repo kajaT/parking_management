@@ -98,11 +98,11 @@ public:
 
 
 // calculation distance to the entrance (x:21, y:8) for each parking spce of this section
-	pow1 = pow((free_pose1.position.x-31),2) + pow((free_pose1.position.y-14),2); 
+	pow1 = pow((free_pose1.position.x-31),2) + pow((free_pose1.position.y-8),2); 
     d1 = sqrt(pow1);
-    pow2 = pow((free_pose2.position.x-31),2) + pow((free_pose2.position.y-14),2);
+    pow2 = pow((free_pose2.position.x-31),2) + pow((free_pose2.position.y-8),2);
     d2 = sqrt(pow2);
-    pow3 = pow((free_pose3.position.x-31),2) + pow((free_pose3.position.y-14),2);
+    pow3 = pow((free_pose3.position.x-31),2) + pow((free_pose3.position.y-8),2);
     d3 = sqrt(pow3);
     
     ROS_INFO("d1 in section_head: %f", d1);
@@ -193,7 +193,7 @@ int main(int argc, char** argv)
   ros::NodeHandle n;
 
   section sec(n, argc, argv);
-  ros::Rate loop_rate(.5);
+  ros::Rate loop_rate(1);
 
 // returns false if node has finished shutting down
   while (ros::ok())
